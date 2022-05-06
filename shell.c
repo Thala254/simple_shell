@@ -53,9 +53,11 @@ void _EOF(int len, char *buf)
 int main(void)
 {
 	ssize_t len = 0;
-	char *buf = NULL, **arv;
+	char *buf = NULL, **arv, *value, *pathname;
 	size_t size = 0;
+	list_path *head = NULL;
 
+	void (*f) (char **);
 	signal(SIGINT, signal_handler);
 	while (len != EOF)
 	{
@@ -67,9 +69,24 @@ int main(void)
 			execute(arv);
 		else
 		{
-			
+			value = _getenv("PATH");
+			head = linkpath(value);
+			pathname = _which(arv[0], head);
+			f = checkbuiltinfnc(arv);
+			if (f)
+			{
+				free(buf);
+				f(arv);
+			}
+			else if (!pathname)
+				execute(arv);
+			else if (pathname)
+			{
+				free(arv[0]);
+				arv[0] = pathname;
+				execute(arv);
+			}
 		}
 	}
-
 	return (0);
 }

@@ -104,3 +104,17 @@ void *_realloc(void *ptr, unsigned int old_size, unsigned int new_size)
 	}
 	return (new);
 }
+
+/**
+ * freearv - frees the array of pointers arv
+ *@arv: array of pointers
+ * Return: void
+ */
+void freearv(char **arv)
+{
+	int i;
+
+	for (i = 0; arv[i]; i++)
+		free(arv[i]);
+	free(arv);
+}
