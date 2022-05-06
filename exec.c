@@ -47,7 +47,7 @@ char **splitstring(char *str, const char *delim)
  */
 void execute(char **argv)
 {
-	int pid;
+	int pid, status;
 
 	if (!argv || !argv[0])
 		return;
@@ -57,10 +57,10 @@ void execute(char **argv)
 	if (pid == 0)
 	{
 		execve(argv[0], argv, environ);
-		perror(argv[0]);
+			perror(argv[0]);
 		exit(EXIT_FAILURE);
 	}
-
+	wait(&status);
 }
 
 /**
