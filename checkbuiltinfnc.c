@@ -17,27 +17,21 @@ void(*checkbuiltinfnc(char **arv))(char **arv)
 		{NULL, NULL}
 	};
 
-	printf("0");
 	for (i = 0; T[i].name; i++)
 	{
-		printf("1");
 		j = 0;
 		if (T[i].name[j] == arv[0][j])
 		{
-			printf("2");
 			for (j = 0; arv[0][j]; j++)
 			{
-				printf("3");
 				if (T[i].name[j] != arv[0][j])
 				{
-					printf("4");
 					break;
 				}
 			}
-			printf("5");
+
 			if (!arv[0][j])
 			{
-				printf("6");
 				return (T[i].func);
 			}
 		}
