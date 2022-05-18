@@ -110,7 +110,7 @@ void _cd(char **args)
 	if (args[1])
 	{
 		/* checking - for previous cd */
-		if (strncmp(args[1], "-", 1) == 0)
+		if (_strncmp(args[1], "-", 1) == 0)
 		{
 			cd_prev();
 		}

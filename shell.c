@@ -56,13 +56,13 @@ int main(void)
 	char *buf = NULL, **arv, *value, *pathname;
 	size_t size = 0;
 	list_path *head = NULL;
+	void (*f)(char **);
 
-	void (*f) (char **);
 	signal(SIGINT, signal_handler);
 	while (len != EOF)
 	{
 		isterminal();
-		len = getline(&buf, &size, stdin);
+		len = _getline(&buf, &size, stdin);
 		_EOF(len, buf);
 		arv = splitstring(buf, " \n");
 		if (!arv || !arv[0])

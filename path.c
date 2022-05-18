@@ -74,11 +74,11 @@ list_path *linkpath(char *path)
 	char *token;
 	char *cpath = _strdup(path);
 
-	token = strtok(cpath, ":");
+	token = _strtok(cpath, ":");
 	while (token)
 	{
 		head = add_node_end(&head, token);
-		token = strtok(NULL, ":");
+		token = _strtok(NULL, ":");
 	}
 	return (head);
 }

@@ -55,6 +55,35 @@ int _strcmp(char *s1, char *s2)
 }
 
 /**
+ * _strncmp - Compare two strings
+ *
+ * @s1: string 1
+ * @s2: string 2
+ * @n: number of bytes from source
+ *
+ * Return: an integer less than, equal to, or greater than zero if s1 is found,
+ * respectively, to be less than, to match, or be greater than s2
+ */
+
+int _strncmp(const char *s1, const char *s2, size_t n)
+{
+	size_t i;
+
+	for (i = 0; s1[i] && s2[i] && i < n; i++)
+	{
+		if (s1[i] > s2[i])
+			return (s1[i] - s2[i]);
+		else if (s1[i] < s2[i])
+			return (s1[i] - s2[i]);
+	}
+
+	if (i == n)
+		return (0);
+	else
+		return (-15);
+}
+
+/**
  * _strcpy - copies the string pointed to by src,
  * including the terminating null byte (\0), to the buffer pointed to by dest
  *

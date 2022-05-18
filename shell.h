@@ -44,6 +44,7 @@ char *concat_strings(char *name, char *sep, char *value);
 char **splitstring(char *str, const char *delim);
 char *_strcat(char *dest, char *src);
 int _strcmp(char *s1, char *s2);
+int _strncmp(const char *s1, const char *s2, size_t n);
 char *_strcpy(char *dest, char *src);
 void execute(char **argv);
 void *_realloc(void *ptr, unsigned int old_size, unsigned int new_size);
@@ -63,5 +64,13 @@ char *get_cwd(void);
 int cd_home(void);
 int cd_prev(void);
 void _cd(char **args);
+int tok_len(char *str, char *delim);
+int tok_count(char *str, char *delim);
+char **_strtok(char *str, char *delim);
+void line_ptr(char **lineptr, size_t *n, char *buf, size_t size);
+ssize_t _getline(char **lineptr, size_t *n, FILE *stream);
+void line_part(char **line, ssize_t len);
+ssize_t get_new_len(char *line);
+void operator_check(char *line, ssize_t *new_line);
 
 #endif
