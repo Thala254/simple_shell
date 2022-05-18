@@ -22,7 +22,7 @@ char **splitstring(char *str, const char *delim)
 	for (i = 0; str[i]; i++)
 		copy[i] = str[i];
 	copy[i] = '\0';
-	token = _strtok(copy, delim);
+	token = strtok(copy, delim);
 	arr = malloc(sizeof(char *) * 2);
 	arr[0] = _strdup(token);
 
@@ -30,7 +30,7 @@ char **splitstring(char *str, const char *delim)
 	wn = 3;
 	while (token)
 	{
-		token = _strtok(NULL, delim);
+		token = strtok(NULL, delim);
 		arr = _realloc(arr, (sizeof(char *) * (wn - 1)), (sizeof(char *) * wn));
 		arr[i] = _strdup(token);
 		i++;
