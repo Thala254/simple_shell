@@ -1,89 +1,89 @@
 #include "main.h"
 
 /**
- * repeated_char - counts the repetitions of a char
+ * char_repeated - counts the repetitions of a char
  *
- * @input: input string
+ * @inp: inp string
  * @i: index
  * Return: repetitions
  */
-int repeated_char(char *input, int i)
+int char_repeated(char *inp, int i)
 {
-	if (*(input - 1) == *input)
-		return (repeated_char(input - 1, i + 1));
+	if (*(inp - 1) == *inp)
+		return (char_repeated(inp - 1, i + 1));
 
 	return (i);
 }
 
 /**
- * error_sep_op - finds syntax errors
+ * err_sep - finds syntax errors
  *
- * @input: input string
+ * @inp: inp string
  * @i: index
  * @last: last char read
  * Return: index of error. 0 when there are no
  * errors
  */
-int error_sep_op(char *input, int i, char last)
+int err_sep(char *inp, int i, char last)
 {
 	int count;
 
 	count = 0;
-	if (*input == '\0')
+	if (*inp == '\0')
 		return (0);
 
-	if (*input == ' ' || *input == '\t')
-		return (error_sep_op(input + 1, i + 1, last));
+	if (*inp == ' ' || *inp == '\t')
+		return (err_sep(inp + 1, i + 1, last));
 
-	if (*input == ';')
+	if (*inp == ';')
 		if (last == '|' || last == '&' || last == ';')
 			return (i);
 
-	if (*input == '|')
+	if (*inp == '|')
 	{
 		if (last == ';' || last == '&')
 			return (i);
 
 		if (last == '|')
 		{
-			count = repeated_char(input, 0);
+			count = char_repeated(inp, 0);
 			if (count == 0 || count > 1)
 				return (i);
 		}
 	}
 
-	if (*input == '&')
+	if (*inp == '&')
 	{
 		if (last == ';' || last == '|')
 			return (i);
 
 		if (last == '&')
 		{
-			count = repeated_char(input, 0);
+			count = char_repeated(inp, 0);
 			if (count == 0 || count > 1)
 				return (i);
 		}
 	}
 
-	return (error_sep_op(input + 1, i + 1, *input));
+	return (err_sep(inp + 1, i + 1, *inp));
 }
 
 /**
  * first_char - finds index of the first char
  *
- * @input: input string
+ * @inp: inp string
  * @i: index
  * Return: 1 if there is an error. 0 in other case.
  */
-int first_char(char *input, int *i)
+int first_char(char *inp, int *i)
 {
 
-	for (*i = 0; input[*i]; *i += 1)
+	for (*i = 0; inp[*i]; *i += 1)
 	{
-		if (input[*i] == ' ' || input[*i] == '\t')
+		if (inp[*i] == ' ' || inp[*i] == '\t')
 			continue;
 
-		if (input[*i] == ';' || input[*i] == '|' || input[*i] == '&')
+		if (inp[*i] == ';' || inp[*i] == '|' || inp[*i] == '&')
 			return (-1);
 
 		break;
@@ -93,37 +93,37 @@ int first_char(char *input, int *i)
 }
 
 /**
- * print_syntax_error - prints when a syntax error is found
+ * err_print_syntax - prints when a syntax error is found
  *
- * @datash: data structure
- * @input: input string
+ * @datashell: data structure
+ * @inp: inp string
  * @i: index of the error
  * @bool: to control msg error
  * Return: no return
  */
-void print_syntax_error(data_shell *datash, char *input, int i, int bool)
+void err_print_syntax(shell_data *datashell, char *inp, int i, int bool)
 {
 	char *msg, *msg2, *msg3, *error, *counter;
 	int length;
 
-	if (input[i] == ';')
+	if (inp[i] == ';')
 	{
 		if (bool == 0)
-			msg = (input[i + 1] == ';' ? ";;" : ";");
+			msg = (inp[i + 1] == ';' ? ";;" : ";");
 		else
-			msg = (input[i - 1] == ';' ? ";;" : ";");
+			msg = (inp[i - 1] == ';' ? ";;" : ";");
 	}
 
-	if (input[i] == '|')
-		msg = (input[i + 1] == '|' ? "||" : "|");
+	if (inp[i] == '|')
+		msg = (inp[i + 1] == '|' ? "||" : "|");
 
-	if (input[i] == '&')
-		msg = (input[i + 1] == '&' ? "&&" : "&");
+	if (inp[i] == '&')
+		msg = (inp[i + 1] == '&' ? "&&" : "&");
 
 	msg2 = ": Syntax error: \"";
 	msg3 = "\" unexpected\n";
-	counter = aux_itoa(datash->counter);
-	length = _strlen(datash->av[0]) + _strlen(counter);
+	counter = aux_itoa(datashell->counter);
+	length = _strlen(datashell->argve[0]) + _strlen(counter);
 	length += _strlen(msg) + _strlen(msg2) + _strlen(msg3) + 2;
 
 	error = malloc(sizeof(char) * (length + 1));
@@ -132,7 +132,7 @@ void print_syntax_error(data_shell *datash, char *input, int i, int bool)
 		free(counter);
 		return;
 	}
-	_strcpy(error, datash->av[0]);
+	_strcpy(error, datashell->argve[0]);
 	_strcat(error, ": ");
 	_strcat(error, counter);
 	_strcat(error, msg2);
@@ -146,30 +146,30 @@ void print_syntax_error(data_shell *datash, char *input, int i, int bool)
 }
 
 /**
- * check_syntax_error - intermediate function to
+ * error_check_syntax - intermediate function to
  * find and print a syntax error
  *
- * @datash: data structure
- * @input: input string
+ * @datashell: data structure
+ * @inp: inp string
  * Return: 1 if there is an error. 0 in other case
  */
-int check_syntax_error(data_shell *datash, char *input)
+int error_check_syntax(shell_data *datashell, char *inp)
 {
 	int begin = 0;
 	int f_char = 0;
 	int i = 0;
 
-	f_char = first_char(input, &begin);
+	f_char = first_char(inp, &begin);
 	if (f_char == -1)
 	{
-		print_syntax_error(datash, input, begin, 0);
+		err_print_syntax(datashell, inp, begin, 0);
 		return (1);
 	}
 
-	i = error_sep_op(input + begin, 0, *(input + begin));
+	i = err_sep(inp + begin, 0, *(inp + begin));
 	if (i != 0)
 	{
-		print_syntax_error(datash, input, begin + i, 1);
+		err_print_syntax(datashell, inp, begin + i, 1);
 		return (1);
 	}
 

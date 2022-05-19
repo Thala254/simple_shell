@@ -4,13 +4,13 @@
  * check_env - checks if the typed variable is an env variable
  *
  * @h: head of linked list
- * @in: input string
+ * @in: inp string
  * @data: data structure
  * Return: no return
  */
-void check_env(r_var **h, char *in, data_shell *data)
+void check_env(var **h, char *in, shell_data *data)
 {
-	int row, chr, j, lval;
+	int row, chr, j, lvalu;
 	char **_envr;
 
 	_envr = data->_environ;
@@ -20,8 +20,8 @@ void check_env(r_var **h, char *in, data_shell *data)
 		{
 			if (_envr[row][chr] == '=')
 			{
-				lval = _strlen(_envr[row] + chr + 1);
-				add_rvar_node(h, j, _envr[row] + chr + 1, lval);
+				lvalu = _strlen(_envr[row] + chr + 1);
+				add_var(h, j, _envr[row] + chr + 1, lvalu);
 				return;
 			}
 
@@ -38,19 +38,19 @@ void check_env(r_var **h, char *in, data_shell *data)
 			break;
 	}
 
-	add_rvar_node(h, j, NULL, 0);
+	add_var(h, j, NULL, 0);
 }
 
 /**
  * check_vars - check if the typed variable is $$ or $?
  *
  * @h: head of the linked list
- * @in: input string
+ * @in: inp string
  * @st: last status of the Shell
  * @data: data structure
  * Return: no return
  */
-int check_vars(r_var **h, char *in, char *st, data_shell *data)
+int check_vars(var **h, char *in, char *st, shell_data *data)
 {
 	int i, lst, lpd;
 
@@ -62,19 +62,19 @@ int check_vars(r_var **h, char *in, char *st, data_shell *data)
 		if (in[i] == '$')
 		{
 			if (in[i + 1] == '?')
-				add_rvar_node(h, 2, st, lst), i++;
+				add_var(h, 2, st, lst), i++;
 			else if (in[i + 1] == '$')
-				add_rvar_node(h, 2, data->pid, lpd), i++;
+				add_var(h, 2, data->pid, lpd), i++;
 			else if (in[i + 1] == '\n')
-				add_rvar_node(h, 0, NULL, 0);
+				add_var(h, 0, NULL, 0);
 			else if (in[i + 1] == '\0')
-				add_rvar_node(h, 0, NULL, 0);
+				add_var(h, 0, NULL, 0);
 			else if (in[i + 1] == ' ')
-				add_rvar_node(h, 0, NULL, 0);
+				add_var(h, 0, NULL, 0);
 			else if (in[i + 1] == '\t')
-				add_rvar_node(h, 0, NULL, 0);
+				add_var(h, 0, NULL, 0);
 			else if (in[i + 1] == ';')
-				add_rvar_node(h, 0, NULL, 0);
+				add_var(h, 0, NULL, 0);
 			else
 				check_env(h, in + i, data);
 		}
@@ -84,79 +84,79 @@ int check_vars(r_var **h, char *in, char *st, data_shell *data)
 }
 
 /**
- * replaced_input - replaces string into variables
+ * replaced_inp - replaces string into variables
  *
  * @head: head of the linked list
- * @input: input string
- * @new_input: new input string (replaced)
+ * @inp: inp string
+ * @new_inp: new inp string (replaced)
  * @nlen: new length
  * Return: replaced string
  */
-char *replaced_input(r_var **head, char *input, char *new_input, int nlen)
+char *replaced_inp(var **head, char *inp, char *new_inp, int nlen)
 {
-	r_var *indx;
+	var *indx;
 	int i, j, k;
 
 	indx = *head;
 	for (j = i = 0; i < nlen; i++)
 	{
-		if (input[j] == '$')
+		if (inp[j] == '$')
 		{
-			if (!(indx->len_var) && !(indx->len_val))
+			if (!(indx->var_len) && !(indx->val_lenu))
 			{
-				new_input[i] = input[j];
+				new_inp[i] = inp[j];
 				j++;
 			}
-			else if (indx->len_var && !(indx->len_val))
+			else if (indx->var_len && !(indx->val_lenu))
 			{
-				for (k = 0; k < indx->len_var; k++)
+				for (k = 0; k < indx->var_len; k++)
 					j++;
 				i--;
 			}
 			else
 			{
-				for (k = 0; k < indx->len_val; k++)
+				for (k = 0; k < indx->val_lenu; k++)
 				{
-					new_input[i] = indx->val[k];
+					new_inp[i] = indx->valu[k];
 					i++;
 				}
-				j += (indx->len_var);
+				j += (indx->var_len);
 				i--;
 			}
 			indx = indx->next;
 		}
 		else
 		{
-			new_input[i] = input[j];
+			new_inp[i] = inp[j];
 			j++;
 		}
 	}
 
-	return (new_input);
+	return (new_inp);
 }
 
 /**
  * rep_var - calls functions to replace string into vars
  *
- * @input: input string
- * @datash: data structure
+ * @inp: inp string
+ * @datashell: data structure
  * Return: replaced string
  */
-char *rep_var(char *input, data_shell *datash)
+char *rep_var(char *inp, shell_data *datashell)
 {
-	r_var *head, *indx;
-	char *status, *new_input;
+	var *head, *indx;
+	char *status, *new_inp;
 	int olen, nlen;
 
-	status = aux_itoa(datash->status);
+	status = aux_itoa(datashell->status);
 	head = NULL;
 
-	olen = check_vars(&head, input, status, datash);
+	olen = check_vars(&head, inp, status, datashell);
 
 	if (head == NULL)
 	{
 		free(status);
-		return (input);
+		return (inp);
 	}
 
 	indx = head;
@@ -164,20 +164,20 @@ char *rep_var(char *input, data_shell *datash)
 
 	while (indx != NULL)
 	{
-		nlen += (indx->len_val - indx->len_var);
+		nlen += (indx->val_lenu - indx->var_len);
 		indx = indx->next;
 	}
 
 	nlen += olen;
 
-	new_input = malloc(sizeof(char) * (nlen + 1));
-	new_input[nlen] = '\0';
+	new_inp = malloc(sizeof(char) * (nlen + 1));
+	new_inp[nlen] = '\0';
 
-	new_input = replaced_input(&head, input, new_input, nlen);
+	new_inp = replaced_inp(&head, inp, new_inp, nlen);
 
-	free(input);
+	free(inp);
 	free(status);
-	free_rvar_list(&head);
+	free_var(&head);
 
-	return (new_input);
+	return (new_inp);
 }

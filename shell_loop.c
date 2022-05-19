@@ -1,12 +1,12 @@
 #include "main.h"
 
 /**
- * without_comment - deletes comments from the input
+ * uncommented - deletes comments from the inp
  *
- * @in: input string
- * Return: input without comments
+ * @in: inp string
+ * Return: inp without comments
  */
-char *without_comment(char *in)
+char *uncommented(char *in)
 {
 	int i, up_to;
 
@@ -36,42 +36,42 @@ char *without_comment(char *in)
 }
 
 /**
- * shell_loop - Loop of shell
- * @datash: data relevant (av, input, args)
+ * terminal_loop - Loop of shell
+ * @datashell: data relevant (argve, inp, args)
  *
  * Return: no return.
  */
-void shell_loop(data_shell *datash)
+void terminal_loop(shell_data *datashell)
 {
 	int loop, i_eof;
-	char *input;
+	char *inp;
 
 	loop = 1;
 	while (loop == 1)
 	{
 		write(STDIN_FILENO, "#cisfun$ ", 9);
-		input = read_line(&i_eof);
+		inp = read_line(&i_eof);
 		if (i_eof != -1)
 		{
-			input = without_comment(input);
-			if (input == NULL)
+			inp = uncommented(inp);
+			if (inp == NULL)
 				continue;
 
-			if (check_syntax_error(datash, input) == 1)
+			if (error_check_syntax(datashell, inp) == 1)
 			{
-				datash->status = 2;
-				free(input);
+				datashell->status = 2;
+				free(inp);
 				continue;
 			}
-			input = rep_var(input, datash);
-			loop = split_commands(datash, input);
-			datash->counter += 1;
-			free(input);
+			inp = rep_var(inp, datashell);
+			loop = split_commands(datashell, inp);
+			datashell->counter += 1;
+			free(inp);
 		}
 		else
 		{
 			loop = 0;
-			free(input);
+			free(inp);
 		}
 	}
 }

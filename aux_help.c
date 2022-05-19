@@ -6,7 +6,7 @@
  */
 void aux_help_env(void)
 {
-	char *help = "env: env [option] [name=value] [command [args]]\n\t";
+	char *help = "env: env [option] [name=valuue] [command [args]]\n\t";
 
 	write(STDOUT_FILENO, help, _strlen(help));
 	help = "Print the enviroment of the shell.\n";
@@ -20,7 +20,7 @@ void aux_help_env(void)
 void aux_help_setenv(void)
 {
 
-	char *help = "setenv: setenv (const char *name, const char *value,";
+	char *help = "setenv: setenv (const char *name, const char *valuue,";
 
 	write(STDOUT_FILENO, help, _strlen(help));
 	help = "int replace)\n\t";
@@ -57,9 +57,9 @@ void aux_help_general(void)
 	write(STDOUT_FILENO, help, _strlen(help));
 	help = " alias: alias [name=['string']]\n cd: cd [-L|[-P [-e]] [-@]] ";
 	write(STDOUT_FILENO, help, _strlen(help));
-	help = "[dir]\nexit: exit [n]\n  env: env [option] [name=value] [command ";
+	help = "[dir]\nexit: exit [n]\n  env: env [option] [name=valuue] [command ";
 	write(STDOUT_FILENO, help, _strlen(help));
-	help = "[args]]\n  setenv: setenv [variable] [value]\n  unsetenv: ";
+	help = "[args]]\n  setenv: setenv [variable] [valuue]\n  unsetenv: ";
 	write(STDOUT_FILENO, help, _strlen(help));
 	help = "unsetenv [variable]\n";
 	write(STDOUT_FILENO, help, _strlen(help));

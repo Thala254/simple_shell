@@ -6,7 +6,7 @@
  * @nenv: name of the environment variable
  * @name: name passed
  *
- * Return: 0 if are not equal. Another value if they are.
+ * Return: 0 if are not equal. Another valuue if they are.
  */
 int cmp_env_name(const char *nenv, const char *name)
 {
@@ -28,7 +28,7 @@ int cmp_env_name(const char *nenv, const char *name)
  * @name: name of the environment variable
  * @_environ: environment variable
  *
- * Return: value of the environment variable if is found.
+ * Return: valuue of the environment variable if is found.
  * In other case, returns NULL.
  */
 char *_getenv(const char *name, char **_environ)
@@ -36,7 +36,7 @@ char *_getenv(const char *name, char **_environ)
 	char *ptr_env;
 	int i, mov;
 
-	/* Initialize ptr_env value */
+	/* Initialize ptr_env valuue */
 	ptr_env = NULL;
 	mov = 0;
 	/* Compare all environment variables */
@@ -58,23 +58,23 @@ char *_getenv(const char *name, char **_environ)
 /**
  * _env - prints the evironment variables
  *
- * @datash: data relevant.
+ * @datashell: data relevant.
  * Return: 1 on success.
  */
-int _env(data_shell *datash)
+int _env(shell_data *datashell)
 {
 	int i, j;
 
-	for (i = 0; datash->_environ[i]; i++)
+	for (i = 0; datashell->_environ[i]; i++)
 	{
 
-		for (j = 0; datash->_environ[i][j]; j++)
+		for (j = 0; datashell->_environ[i][j]; j++)
 			;
 
-		write(STDOUT_FILENO, datash->_environ[i], j);
+		write(STDOUT_FILENO, datashell->_environ[i], j);
 		write(STDOUT_FILENO, "\n", 1);
 	}
-	datash->status = 0;
+	datashell->status = 0;
 
 	return (1);
 }

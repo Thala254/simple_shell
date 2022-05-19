@@ -5,288 +5,100 @@ This is a simple UNIX command interpreter based on bash.
 ### Invocation
 
 Usage: **shell**
-Shell is started with the standard input connected to the terminal. To start, compile all .c located in this repository by using this command:
+To begin, all .c files should be compiled using the command:
 
 ```
 gcc -Wall -Werror -Wextra -pedantic *.c -o shell
 ./shell
 ```
 
-**shell** is allowed to be invoked interactively and non-interactively. If **shell** is invoked with standard input not connected to a terminal, it reads and executes received commands in order.
+**shell** can be invoked interactively and non-interactively. It reads and executes received commands in order If invoked with standard input not connected to a terminal.
 
 Example:
 
 ```
-$ echo "echo 'main'" | ./shell
-'main'
+$ echo "echo 'man'" | ./shell
+'man'
 $
 ```
 
-When **shell** is invoked with standard input connected to a terminal (determined by isatty(3), the interactive mode is opened. **shell** Will be using the following prompt `^-^ `.
+If a command line argument is invoked, **shell** takes the first argument as a file from which to read commands.
 
 Example:
 
 ```
-$./shell
-^-^
-```
-
-If a command line argument is invoked, **shell** will take that first argument as a file from which to read commands.
-
-Example:
-
-```
-$ cat text
-echo 'main'
-$ ./shell text
-'main'
+$ cat txt
+echo 'man'
+$ ./shell txt
+'man'
 $
 ```
 
 ### Environment
 
-Upon invocation, **shell** receives and copies the environment of the parent process in which it was executed. This environment is an array of _name-value_ strings describing variables in the format _NAME=VALUE_. A few key environmental variables are:
+Upon invocation, **shell** receives and copies the environment of the parent process in which it was executed. Some of the known environmental variables are:
 
 #### HOME
 
-The home directory of the current user and the default directory argument for the **cd** builtin command.
+Current user's home directory and the default directory argument for the **cd** builtin command.
 
 ```
 $ echo "echo $HOME" | ./shell
-/home/vagrant
+/home/yobra
 ```
 
 #### PWD
 
-The current working directory as set by the **cd** command.
+Current working directory set by the **cd** command.
 
 ```
 $ echo "echo $PWD" | ./shell
-/home/vagrant/main/simple_shell
+/home/yobra/man
 ```
 
 #### OLDPWD
 
-The previous working directory as set by the **cd** command.
+Previous working directory set by the **cd** command.
 
 ```
 $ echo "echo $OLDPWD" | ./shell
-/home/vagrant/menu
+/home/yobra/menu
 ```
 
 #### PATH
 
-A colon-separated list of directories in which the shell looks for commands. A null directory name in the path (represented by any of two adjacent colons, an initial colon, or a trailing colon) indicates the current directory.
+A colon-separated list of directories in which the shell looks for commands. A null directory name in the path indicates the current directory.
 
 ```
 $ echo "echo $PATH" | ./shell
-/home/vagrant/.cargo/bin:/home/vagrant/.local/bin:/home/vagrant/.rbenv/plugins/ruby-build/bin:/home/vagrant/.rbenv/shims:/home/vagrant/.rbenv/bin:/home/vagrant/.nvm/versions/node/v10.15.3/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/snap/bin:/home/vagrant/.cargo/bin:/home/vagrant/workflow:/home/vagrant/.local/bin
+/home/yobra/.cargo/bin:/home/yobra/.local/bin:/home/yobra/.rbenv/plugins/ruby-build/bin:/home/yobra/.rbenv/shims:/home/yobra/.rbenv/bin:/home/yobra/.nvm/versions/node/v10.15.3/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/snap/bin:/home/yobra/.cargo/bin:/home/yobra/workflow:/home/yobra/.local/bin
 ```
 
 ### Command Execution
 
-After receiving a command, **shell** tokenizes it into words using `" "` as a delimiter. The first word is considered the command and all remaining words are considered arguments to that command. **shell** then proceeds with the following actions:
-
-1. If the first character of the command is neither a slash (`\`) nor dot (`.`), the shell searches for it in the list of shell builtins. If there exists a builtin by that name, the builtin is invoked.
-2. If the first character of the command is none of a slash (`\`), dot (`.`), nor builtin, **shell** searches each element of the **PATH** environmental variable for a directory containing an executable file by that name.
-3. If the first character of the command is a slash (`\`) or dot (`.`) or either of the above searches was successful, the shell executes the named program with any remaining given arguments in a separate execution environment.
+**shell** tokenizes the received commands into words using space as a delimiter. The first word is the command and all remaining words are arguments to that command.
 
 ### Exit Status
 
-**shell** returns the exit status of the last command executed, with zero indicating success and non-zero indicating failure.
-If a command is not found, the return status is 127; if a command is found but is not executable, the return status is 126.
-All builtins return zero on success and one or two on incorrect usage (indicated by a corresponding error message).
+**shell** returns the exit status of the previous command executed. Zero indicates success and non-zero indicates failure.
 
 ### Signals
 
-While running in interactive mode, **shell** ignores the keyboard input ctrl+c. Alternatively, an input of End-Of-File ctrl+d will exit the program.
-
-User hits ctrl+d in the foutrh command.
-
-```
-$ ./shell
-^-^ ^C
-^-^ ^C
-^-^ ^C
-^-^
-```
-
-### Variable Replacement
-
-**shell** interprets the `$` character for variable replacement.
-
-#### $ENV_VARIABLE
-
-`ENV_VARIABLE` is substituted with its value.
-
-Example:
-
-```
-$ echo "echo $PWD" | ./shell
-/home/vagrant/main/simple_shell
-```
-
-#### $?
-
-`?` is substitued with the return value of the last program executed.
-
-Example:
-
-```
-$ echo "echo $?" | ./shell
-0
-```
-
-#### $$
-
-The second `$` is substitued with the current process ID.
-
-Example:
-
-```
-$ echo "echo $$" | ./shell
-3855
-```
-
-### Comments
-
-**shell** ignores all words and characters preceeded by a `#` character on a line.
-
-Example:
-
-```
-$ echo "echo 'main' #this will be ignored!" | ./shell
-'main'
-```
+**shell** ignores ctrl+c keyboard input in interactive mode but an End-Of-File input i.e ctrl+d exits the program.
 
 ### Operators
 
-**shell** specially interprets the following operator characters:
-
 #### ; - Command separator
 
-Commands separated by a `;` are executed sequentially.
-
-Example:
-
-```
-$ echo "echo 'hello' ; echo 'world'" | ./shell
-'hello'
-'world'
-```
+Faciltates sequential execution of commands separated by ;
 
 #### && - AND logical operator
 
-`command1 && command2`: `command2` is executed if, and only if, `command1` returns an exit status of zero.
-
-Example:
-
-```
-$ echo "error! && echo 'main'" | ./shell
-./shellby: 1: error!: not found
-$ echo "echo 'my name is' && echo 'main'" | ./shell
-'my name is'
-'main'
-```
+Facilitates execution of both commands if exit status of the first command is zero.
 
 #### || - OR logical operator
 
-`command1 || command2`: `command2` is executed if, and only if, `command1` returns a non-zero exit status.
-
-Example:
-
-```
-$ echo "error! || echo 'wait for it'" | ./shell
-./shell: 1: error!: not found
-'wait for it'
-```
-
-The operators `&&` and `||` have equal precedence, followed by `;`.
-
-### Builtin Commands
-
-#### cd
-
-- Usage: `cd [DIRECTORY]`
-- Changes the current directory of the process to `DIRECTORY`.
-- If no argument is given, the command is interpreted as `cd $HOME`.
-- If the argument `-` is given, the command is interpreted as `cd $OLDPWD` and the pathname of the new working directory is printed to standad output.
-- If the argument, `--` is given, the command is interpreted as `cd $OLDPWD` but the pathname of the new working directory is not printed.
-- The environment variables `PWD` and `OLDPWD` are updated after a change of directory.
-
-Example:
-
-```
-$ ./shell
-^-^ pwd
-/home/vagrant/main/simple_shell
-$ cd ../
-^-^ pwd
-/home/vagrant/main
-^-^ cd -
-^-^ pwd
-/home/vagrant/main/simple_shell
-```
-
-#### exit
-
-- Usage: `exit [STATUS]`
-- Exits the shell.
-- The `STATUS` argument is the integer used to exit the shell.
-- If no argument is given, the command is interpreted as `exit 0`.
-
-Example:
-
-```
-$ ./shell
-$ exit
-```
-
-#### env
-
-- Usage: `env`
-- Prints the current environment.
-
-Example:
-
-```
-$ ./shell
-$ env
-NVM_DIR=/home/vagrant/.nvm
-...
-```
-
-#### setenv
-
-- Usage: `setenv [VARIABLE] [VALUE]`
-- Initializes a new environment variable, or modifies an existing one.
-- Upon failure, prints a message to `stderr`.
-
-Example:
-
-```
-$ ./shell
-$ setenv NAME Main
-$ echo $NAME
-Main
-```
-
-#### unsetenv
-
-- Usage: `unsetenv [VARIABLE]`
-- Removes an environmental variable.
-- Upon failure, prints a message to `stderr`.
-
-Example:
-
-```
-$ ./shell
-$ setenv NAME Main
-$ unsetenv NAME
-$ echo $NAME
-
-$
-```
+Faciltates execution of one of the two commnds whose exit status is zero.
 
 ## Authors & Copyrights
 
@@ -295,4 +107,4 @@ $
 
 ## More information
 
-**Shell** is a simple shell unix command interpreter that is part of the main low level programming module at Alx School and is intended to emulate the basics **sh** shell. All the information given in this README is based on the **shell** and **bash** man (1) pages.
+**Shell** is a simple shell unix commandline interpreter that emulates simple functionalities of the **sh** shell.
