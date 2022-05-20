@@ -23,7 +23,7 @@ extern char **environ;
 /**
  * struct runtimedata - structure of data on runtime
  * @argve: argument vector
- * @inp: user's written command line 
+ * @inp: user's written command line
  * @args:  command line arguments
  * @status: previous shell status
  * @counter: lines counter
